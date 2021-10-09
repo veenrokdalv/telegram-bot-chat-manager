@@ -1,0 +1,19 @@
+version: "3.1"
+
+services:
+  tgbot:
+    container_name: bot_template
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python main.py
+    restart: always
+    networks:
+      - botnet
+    volumes:
+      - .:/src
+
+
+networks:
+  botnet:
+    driver: bridge
