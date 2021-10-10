@@ -1,2 +1,1 @@
-# Get my ID bot
-Bot - @getmyid_AIbot
+# Telegram bot chat manager
