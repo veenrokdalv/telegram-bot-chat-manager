@@ -2,7 +2,7 @@ version: "3.1"
 
 services:
   tgbot:
-    container_name: bot_template
+    container_name: bot_chat_manager
     build:
       context: .
       dockerfile: Dockerfile
