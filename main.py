@@ -7,6 +7,8 @@ from aiogram import Dispatcher, Bot, html
 from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from aiogram.dispatcher.fsm.storage.redis import RedisStorage
 from aiogram.dispatcher.fsm.strategy import FSMStrategy
+from aiogram.methods import SetMyCommands
+from aiogram.types import BotCommandScopeAllChatAdministrators, BotCommand
 from aiogram.utils.i18n import I18n
 from aioredis import Redis
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncConnection, AsyncEngine
@@ -44,7 +46,23 @@ async def _on_startup(bots: list[Bot], i18n: I18n, _: I18n.gettext, db_engine: A
                 f'<b>Start time:</> {html.code(_start_time)}.\n'
             )
         )
-
+        await bot(SetMyCommands(
+            commands=[
+                BotCommand(
+                    command='ban',
+                    description='Блокировка пользователя в чате',
+                ),
+                BotCommand(
+                    command='kick',
+                    description='Выгнать пользователя с чата',
+                ),
+                BotCommand(
+                    command='mute',
+                    description='Запретить отправять сообщения',
+                )
+            ],
+            scope=BotCommandScopeAllChatAdministrators(),
+        ))
 
 async def _on_shutdown(dispatcher: Dispatcher, bots: list[Bot], _: I18n.gettext):
     _working_time = str(dt.datetime.utcnow() - settings.START_TIME).split('.')[0]

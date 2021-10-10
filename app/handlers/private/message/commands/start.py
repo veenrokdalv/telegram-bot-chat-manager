@@ -1,4 +1,5 @@
 from aiogram import Dispatcher, html
+from aiogram import F
 from aiogram.types import Message
 from aiogram.utils.i18n import I18n
 
@@ -11,5 +12,5 @@ async def start(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        start, state=None, commands=['start'], chat_type='private',
+        start, commands='start',
     )

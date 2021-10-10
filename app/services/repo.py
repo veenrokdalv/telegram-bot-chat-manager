@@ -1,5 +1,5 @@
 import datetime as dt
-from typing import Optional
+from typing import Optional, Union
 
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncEngine
@@ -85,6 +85,23 @@ class Repo:
 
         async with self.db_session() as session:
             return (await session.execute(stmt)).scalar()
+
+    async def get_telegram_chat_messages_from_chat_member(
+            self, user_id: int, chat_id: int, datetime_interval: dt.timedelta, as_int: bool = False
+    ) -> Union[int, TelegramChatMessage]:
+        """Возвращает список или число сообщений участника телеграм чата с базы данных."""
+        stmt_as_list = sa.select(TelegramChatMessage).filter_by(user_id=user_id, chat_id=chat_id).filter(
+            TelegramChatMessage.date >= dt.datetime.utcnow() - datetime_interval
+        )
+        stmt_as_int = sa.select(sa.func.count(TelegramChatMessage.id)).filter_by(user_id=user_id, chat_id=chat_id).filter(
+            TelegramChatMessage.date >= dt.datetime.utcnow() - datetime_interval
+        )
+
+        async with self.db_session() as session:
+            if as_int:
+                return (await session.execute(stmt_as_int)).scalar()
+
+            return (await session.execute(stmt_as_list)).scalars().all()
 
     async def add_telegram_chat_message(self, **kwargs):
         """Создает и возвращает сообщение из телеграм чата с базы данных."""

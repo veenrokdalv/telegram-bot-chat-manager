@@ -2,6 +2,7 @@ import datetime as dt
 from zoneinfo import ZoneInfo
 
 from aiogram import Dispatcher
+from aiogram import F
 from aiogram.types import Message
 from aiogram.utils.i18n import I18n
 
@@ -32,5 +33,5 @@ async def settings_menu(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        settings_menu, state=None, commands=['settings'], chat_type='private',
+        settings_menu, F.chat.type.in_(('private')), state=None, commands=['settings']
     )

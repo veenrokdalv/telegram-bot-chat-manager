@@ -1,4 +1,5 @@
 from aiogram import Dispatcher, html
+from aiogram import F
 from aiogram.types import Message
 from aiogram.utils.i18n import I18n
 
@@ -16,5 +17,5 @@ async def help_menu(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        help_menu, state=None, commands=['help'], chat_type='private',
+        help_menu, F.chat.type.in_(('private')), state=None, commands=['help'],
     )

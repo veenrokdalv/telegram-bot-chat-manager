@@ -6,3 +6,5 @@ environs>=9.3.3
 Babel==2.9.1
 aiograph==0.2
 attrs==19.1.0
+SpeechRecognition==3.8.1
+moviepy==1.0.3
