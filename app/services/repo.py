@@ -88,7 +88,7 @@ class Repo:
 
     async def get_telegram_chat_messages_from_chat_member(
             self, user_id: int, chat_id: int, datetime_interval: dt.timedelta, as_int: bool = False
-    ) -> Union[int, TelegramChatMessage]:
+    ) -> Union[int, list[TelegramChatMessage]]:
         """Возвращает список или число сообщений участника телеграм чата с базы данных."""
         stmt_as_list = sa.select(TelegramChatMessage).filter_by(user_id=user_id, chat_id=chat_id).filter(
             TelegramChatMessage.date >= dt.datetime.utcnow() - datetime_interval
@@ -120,5 +120,11 @@ class Repo:
     async def edited_text_telegram_chat_message(self, id: int, message_text: str) -> None:
         """Обновляет поле message_text сообщения из телеграм чата в базе данных."""
         stmt = sa.update(TelegramChatMessage).values(message_text=message_text).filter_by(id=id)
+        async with self.db_session.begin() as session:
+            await session.execute(stmt)
+
+    async def deleted_telegram_chat_message(self, id: int) -> None:
+        """Обновляет поле is_delete сообщения из телеграм чата в базе данных."""
+        stmt = sa.update(TelegramChatMessage).values(is_deleted=True).filter_by(id=id)
         async with self.db_session.begin() as session:
             await session.execute(stmt)

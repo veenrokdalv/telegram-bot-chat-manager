@@ -1,6 +1,6 @@
 import datetime as dt
 
-from aiogram import BaseMiddleware, Dispatcher
+from aiogram import BaseMiddleware, Dispatcher, Bot
 from aiogram.methods import GetChatMember, RestrictChatMember
 from aiogram.types import Message, ChatPermissions
 
@@ -16,6 +16,7 @@ class FloodControlInGroupWiddleware(BaseMiddleware):
         if event.chat.type not in ('group', 'supergroup'):
             return await handler(event, data)
 
+        bot: Bot = data['bot']
         repo: Repo = data['repo']
         _: Repo = data['_']
         telegram_chat: TelegramChat = data['telegram_chat']
@@ -43,9 +44,18 @@ class FloodControlInGroupWiddleware(BaseMiddleware):
                     can_send_other_messages=False,
                     can_add_web_page_previews=False,
                 ),
-                until_date=dt.timedelta(minutes=1)
+                until_date=dt.timedelta(minutes=15)
             )
-
+            messages = await repo.get_telegram_chat_messages_from_chat_member(
+                user_id=telegram_chat_member.user_id, chat_id=telegram_chat_member.chat_id,
+                datetime_interval=dt.timedelta(seconds=10)
+            )
+            for message in messages:
+                try:
+                    await bot.delete_message(chat_id=message.chat_id, message_id=message.message_id)
+                    await repo.deleted_telegram_chat_message(id=message.id)
+                except:
+                    continue
         return await handler(event, data)
 
 
