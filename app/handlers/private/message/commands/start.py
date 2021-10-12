@@ -12,5 +12,5 @@ async def start(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        start,F.chat.type.in_((('private'))),  commands='start',
+        start, F.chat.type.in_(('private')),  commands='start',
     )
