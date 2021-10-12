@@ -38,3 +38,17 @@ class HasPermissionFilter(BaseFilter):
 
 def setup(dispatcher: Dispatcher, *args, **kwargs):
     dispatcher.message.bind_filter(HasPermissionFilter)
+
+
+
+class MyFilter(BoundFilter):
+    key = 'only_admins'
+
+    def __init__(self, only_admins):
+        self.only_admins = only_admins
+        self.admins_ids = conf.admins_ids
+
+
+    async def check(self, event, **kwargs):
+        if self.only_admins:
+            return event.from_user.id in self.only_admins

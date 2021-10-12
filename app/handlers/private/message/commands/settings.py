@@ -33,5 +33,5 @@ async def settings_menu(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        settings_menu, F.chat.type.in_(('private')), state=None, commands=['settings']
+        settings_menu, F.chat.type.in_(('private',)), state=None, commands=['settings']
     )
