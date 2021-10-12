@@ -17,5 +17,5 @@ async def help_menu(message: Message, _: I18n.gettext):
 
 def setup(dispatcher: Dispatcher):
     dispatcher.message.register(
-        help_menu, F.chat.type.in_(('private')), state=None, commands=['help'],
+        help_menu, F.chat.type.in_((('private'))), state=None, commands=['help'],
     )

@@ -46,23 +46,8 @@ async def _on_startup(bots: list[Bot], i18n: I18n, _: I18n.gettext, db_engine: A
                 f'<b>Start time:</> {html.code(_start_time)}.\n'
             )
         )
-        await bot(SetMyCommands(
-            commands=[
-                BotCommand(
-                    command='ban',
-                    description='Блокировка пользователя в чате',
-                ),
-                BotCommand(
-                    command='kick',
-                    description='Выгнать пользователя с чата',
-                ),
-                BotCommand(
-                    command='mute',
-                    description='Запретить отправять сообщения',
-                )
-            ],
-            scope=BotCommandScopeAllChatAdministrators(),
-        ))
+        for bot_command in settings.BOT_COMMANDS:
+            await bot(SetMyCommands(**bot_command))
 
 async def _on_shutdown(dispatcher: Dispatcher, bots: list[Bot], _: I18n.gettext):
     _working_time = str(dt.datetime.utcnow() - settings.START_TIME).split('.')[0]
