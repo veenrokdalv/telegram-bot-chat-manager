@@ -8,7 +8,7 @@ class TelegramChat(BaseModel):
     __tablename__ = 'telegram_chats'
     id = sa.Column(sa.BigInteger(), nullable=False, primary_key=True, unique=True)
     use_flood_control = sa.Column(sa.Boolean(), default=True)
-    members_can_forawrd_message = sa.Column(sa.Boolean(), default=True)
+    members_can_forward_message = sa.Column(sa.Boolean(), default=True)
     members_can_send_message_via_bot = sa.Column(sa.Boolean(), default=True)
     members_can_send_video = sa.Column(sa.Boolean(), default=True)
     members_can_send_photo = sa.Column(sa.Boolean(), default=True)
