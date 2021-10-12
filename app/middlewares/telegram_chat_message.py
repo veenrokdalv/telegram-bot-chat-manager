@@ -121,7 +121,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat_message = data['telegram_chat_message']
         bot: Bot = data['bot']
 
-        if not telegram_chat.members_can_forawrd_message and (message.forward_from
+        if not telegram_chat.members_can_forward_message and (message.forward_from
                                                               or message.forward_from_chat):
             member = await GetChatMember(chat_id=telegram_chat_message.chat_id, user_id=telegram_chat_message.user_id)
             if member.status in ['creator', 'administrator']:
