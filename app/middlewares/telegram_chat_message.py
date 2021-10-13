@@ -1,4 +1,5 @@
 import re
+
 from aiogram import BaseMiddleware, Dispatcher, Bot
 from aiogram.methods import GetChatMember
 from aiogram.types import Message
@@ -8,6 +9,7 @@ from app.models.telegram_chat import TelegramChat
 from app.models.telegram_chat_member import TelegramChatMember
 from app.models.telegram_chat_message import TelegramChatMessage
 from app.services.repo import Repo
+from app.utils.helper.telegram_chat_member_rating import TelegramChatMemberRatingStatus
 
 
 class TelegramChatMessageMiddleware(BaseMiddleware):
@@ -51,6 +53,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
     async def message_photo_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message: TelegramChatMessage = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_photo and message.photo:
@@ -62,12 +65,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-0.1,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def message_video_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_video and message.video:
@@ -79,12 +87,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-0.1,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def message_document_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_document and message.document:
@@ -96,12 +109,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-0.1,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def message_via_bot_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message: TelegramChatMessage = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_message_via_bot and message.via_bot:
@@ -113,12 +131,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-0.5,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def forward_message_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_forward_message and (message.forward_from
@@ -131,12 +154,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-1,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def message_link_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         text = message.text or message.caption
@@ -155,12 +183,17 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-5,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 
     async def message_mention_bot_trottled(self, message: Message, data: dict):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
+        telegram_chat_member = data['telegram_chat_member']
         bot: Bot = data['bot']
 
         text = message.text or message.caption
@@ -176,6 +209,10 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
                 await bot.delete_message(chat_id=telegram_chat_message.chat_id,
                                          message_id=telegram_chat_message.message_id, )
                 await repo.deleted_telegram_chat_message(id=telegram_chat_message.id)
+                await repo.add_telegram_chat_member_rating(
+                    from_chat_member_id=None, in_chat_member_id=telegram_chat_member.id, value=-4,
+                    status=TelegramChatMemberRatingStatus.ACTIVE
+                )
             except:
                 pass
 

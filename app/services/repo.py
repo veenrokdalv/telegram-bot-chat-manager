@@ -7,8 +7,10 @@ from sqlalchemy.orm import sessionmaker
 
 from app.models.telegram_chat import TelegramChat
 from app.models.telegram_chat_member import TelegramChatMember
+from app.models.telegram_chat_member_rating import TelegramChatMemberRating
 from app.models.telegram_chat_message import TelegramChatMessage
 from app.models.telegram_user import TelegramUser
+from app.utils.helper.telegram_chat_member_rating import TelegramChatMemberRatingStatus
 
 
 class NotFoundTarget(Exception):
@@ -93,7 +95,8 @@ class Repo:
         stmt_as_list = sa.select(TelegramChatMessage).filter_by(user_id=user_id, chat_id=chat_id).filter(
             TelegramChatMessage.date >= dt.datetime.utcnow() - datetime_interval
         )
-        stmt_as_int = sa.select(sa.func.count(TelegramChatMessage.id)).filter_by(user_id=user_id, chat_id=chat_id).filter(
+        stmt_as_int = sa.select(sa.func.count(TelegramChatMessage.id)).filter_by(user_id=user_id,
+                                                                                 chat_id=chat_id).filter(
             TelegramChatMessage.date >= dt.datetime.utcnow() - datetime_interval
         )
 
@@ -128,3 +131,31 @@ class Repo:
         stmt = sa.update(TelegramChatMessage).values(is_deleted=True).filter_by(id=id)
         async with self.db_session.begin() as session:
             await session.execute(stmt)
+
+    async def add_telegram_chat_member_rating(self, **kwargs) -> TelegramChatMemberRating:
+        _rating = TelegramChatMemberRating(
+            from_chat_member_id=kwargs.pop('from_chat_member_id'),
+            in_chat_member_id=kwargs.pop('in_chat_member_id'),
+            value=kwargs.pop('value'),
+            status=kwargs.pop('status'),
+        )
+        async with self.db_session.begin() as session:
+            session.add(_rating)
+        return _rating
+
+    async def update_telegram_chat_member_rating_status(self, id: int, status: str) -> None:
+        stmt = sa.update(TelegramChatMemberRating).values(status=status).filter_by(id=id)
+        async with self.db_session.begin() as session:
+            await session.execute(stmt)
+
+    async def get_sum_telegram_chat_member_rating(self, from_member_id: int = None, in_member_id: int = None) -> float:
+        if isinstance(from_member_id, int):
+            stmt = sa.update(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
+                from_chat_member_id=from_member_id, status=TelegramChatMemberRatingStatus.ACTIVE)
+        elif isinstance(in_member_id, int):
+            stmt = sa.update(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
+                in_chat_member_id=in_member_id, status=TelegramChatMemberRatingStatus.ACTIVE)
+        else:
+            raise ValueError
+        async with self.db_session.begin() as session:
+            return (await session.execute(stmt)).scalar()
