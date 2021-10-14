@@ -150,10 +150,10 @@ class Repo:
 
     async def get_sum_telegram_chat_member_rating(self, from_member_id: int = None, in_member_id: int = None) -> float:
         if isinstance(from_member_id, int):
-            stmt = sa.update(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
+            stmt = sa.select(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
                 from_chat_member_id=from_member_id, status=TelegramChatMemberRatingStatus.ACTIVE)
         elif isinstance(in_member_id, int):
-            stmt = sa.update(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
+            stmt = sa.select(sa.func.sum(TelegramChatMemberRating.value)).filter_by(
                 in_chat_member_id=in_member_id, status=TelegramChatMemberRatingStatus.ACTIVE)
         else:
             raise ValueError
