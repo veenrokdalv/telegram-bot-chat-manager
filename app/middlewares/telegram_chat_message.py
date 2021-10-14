@@ -54,6 +54,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message: TelegramChatMessage = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_photo and message.photo:
@@ -76,6 +77,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_video and message.video:
@@ -98,6 +100,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_document and message.document:
@@ -120,6 +123,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message: TelegramChatMessage = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_send_message_via_bot and message.via_bot:
@@ -142,6 +146,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         if not telegram_chat.members_can_forward_message and (message.forward_from
@@ -165,13 +170,12 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         text = message.text or message.caption
         if not text:
             return False
-        loggers.middlewares.debug(re.findall(r'htts?://.+', text))
-        loggers.middlewares.debug(re.findall(r'tg?m?e?:?/?/.+', text))
         if not telegram_chat.members_can_send_link and (
                 re.findall(r'tg?\.?m?e?:?/?/.+', text) or re.findall(r'https?://.+', text)
         ):
@@ -194,6 +198,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         telegram_chat: TelegramChat = data['telegram_chat']
         telegram_chat_message = data['telegram_chat_message']
         telegram_chat_member = data['telegram_chat_member']
+        repo = data['repo']
         bot: Bot = data['bot']
 
         text = message.text or message.caption

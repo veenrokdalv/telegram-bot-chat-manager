@@ -158,4 +158,4 @@ class Repo:
         else:
             raise ValueError
         async with self.db_session.begin() as session:
-            return (await session.execute(stmt)).scalar()
+            return (await session.execute(stmt)).scalar() or 0
