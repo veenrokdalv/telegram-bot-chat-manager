@@ -173,7 +173,7 @@ class TelegramChatMessageMiddleware(BaseMiddleware):
         repo = data['repo']
         bot: Bot = data['bot']
 
-        text = message.text or message.caption
+        text = message.html_text
         if not text:
             return False
         if not telegram_chat.members_can_send_link and (
