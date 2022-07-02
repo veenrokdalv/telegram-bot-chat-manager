@@ -1,8 +1,12 @@
-FROM python:3.9-slim-buster
+FROM python:3.10-slim-buster
 
 WORKDIR /src
 
-RUN pip install --user poetry
+COPY ./pyproject.toml /src
+
+RUN pip install poetry
+
+RUN poetry config virtualenvs.create false
 
 RUN poetry install
 
