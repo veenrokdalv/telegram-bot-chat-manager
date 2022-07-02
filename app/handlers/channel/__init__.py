@@ -1,13 +1,11 @@
 from aiogram import Dispatcher
 
 import loggers
-from . import (private, group, channel)
+from . import new_member
 
 __all__ = ['setup']
 
 
 def setup(dispatcher: Dispatcher):
-    for module in (private, group, channel):
+    for module in (new_member, ):
         module.setup(dispatcher)
-
-    loggers.handlers.debug('Setup handlers.')
