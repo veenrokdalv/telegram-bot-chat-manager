@@ -2,13 +2,12 @@ import datetime as dt
 import logging
 import os
 from zoneinfo import ZoneInfo
-
+import aiogram
 from aiogram import Dispatcher, Bot, html
 from aiogram.dispatcher.fsm.storage.memory import MemoryStorage
 from aiogram.dispatcher.fsm.storage.redis import RedisStorage
 from aiogram.dispatcher.fsm.strategy import FSMStrategy
 from aiogram.methods import SetMyCommands
-from aiogram.types import BotCommandScopeAllChatAdministrators, BotCommand
 from aiogram.utils.i18n import I18n
 from aioredis import Redis
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncConnection, AsyncEngine
@@ -80,6 +79,8 @@ if __name__ == '__main__':
         os.mkdir(f'{settings.LOGS_DIR}/{settings.START_TIME}')
 
     loggers.setup()
+
+    logging.debug(f'Aiogram version == {aiogram.__version__}')
 
     # Url db.
     url = (f'postgresql+asyncpg://{settings.DATABASE_USER}:{settings.DATABASE_PASSWORD}@{settings.DATABASE_HOST}:'
