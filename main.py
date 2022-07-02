@@ -101,7 +101,7 @@ if __name__ == '__main__':
     else:
         storage = MemoryStorage()
 
-    dispatcher = Dispatcher(storage=storage, fsm_strategy=FSMStrategy.USER_IN_CHAT, isolate_events=False)
+    dispatcher = Dispatcher(storage=storage, fsm_strategy=FSMStrategy.USER_IN_CHAT)
 
     i18n = I18n(path=settings.LOCALES_DIR, default_locale=settings.DEFAULT_LOCALE, domain=settings.I18N_DOMAIN)
 
