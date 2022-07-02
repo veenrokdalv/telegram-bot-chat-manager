@@ -16,6 +16,7 @@ Babel = "^2.10.3"
 aiograph = "^0.2"
 moviepy = "^1.0.3"
 attrs = "19.1.0"
+redis = "^4.3.4"
 
 [tool.poetry.dev-dependencies]
 
